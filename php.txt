@@ -1,0 +1,51 @@
+<?php
+// Variáveis para armazenar os dados enviados
+$name = "";
+$nameErr = "";
+
+// Processando os dados do formulário quando ele é enviado
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Validação do nome
+    if (empty($_POST["name"])) {
+        $nameErr = "Nome é obrigatório!";
+    } else {
+        $name = test_input($_POST["name"]);
+    }
+}
+
+// Função para limpar os dados (evitar ataques XSS)
+function test_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+?>
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Nome</title>
+</head>
+<body>
+
+<h2>Formulário de Nome</h2>
+<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+    <label for="name">Nome (obrigatório):</label>
+    <input type="text" id="name" name="name" value="<?php echo $name; ?>">
+    <span style="color:red;"><?php echo $nameErr; ?></span><br><br>
+
+    <input type="submit" value="Enviar">
+</form>
+
+<?php
+// Exibe o nome quando o formulário for enviado e validado
+if ($_SERVER["REQUEST_METHOD"] == "POST" && !$nameErr) {
+    echo "<h3>Olá, $name!</h3>";
+}
+?>
+
+</body>
+</html>
